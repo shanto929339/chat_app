@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
              builder: (controller) {
                return IconButton(onPressed:(){
                        controller.signOut();
+                       controller.update();
                      }, icon:const Icon(Icons.logout));
              }
            )],),

@@ -1,10 +1,7 @@
 import 'package:firabse_realtime/Core/AppRoute/approute.dart';
-import 'package:firabse_realtime/Helper/shared_pefarance_helper.dart';
-import 'package:firabse_realtime/utils/AppColors/app_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController extends GetxController{
 
@@ -38,23 +35,22 @@ class AuthController extends GetxController{
      Future<void> signIn() async {
           try {
                final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
-                    email: emailController.text,
-                    password: passwordController.text,
+                    email: emailController.text.trim(),
+                    password: passwordController.text.trim(),
                );
-           bool sp=  await SharePrefsHelper.setBool(SharedPreferenceValue.isUserLogedIn, true);
 
-              print("This is the sign in vlaue =====================${sp}");
-
+               Get.offAllNamed(AppRoute.homeScreen) ;
+               update();
                // Handle successful sign-in
                print('Signed in: ${userCredential.user}');
 
-               if(firebaseUser.value != null){
-                    Get.offAllNamed(AppRoute.homeScreen) ;
-               }
-               update();
+               // if(firebaseUser.value != null ){
+               //  Get.offAllNamed(AppRoute.homeScreen) ;
+               // }
+
 
           } catch (e) {
-               Get.snackbar("","${e}",colorText: AppColors.blackColor);
+               //Get.snackbar("","${e}",colorText: AppColors.blackColor);
                print('Sign-in failed:=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= $e');
           }
      }
@@ -66,10 +62,7 @@ class AuthController extends GetxController{
                await _auth.signOut();
                // Handle successful sign-out
                print('Signed out');
-
-               if(firebaseUser.value == null){
                Get.offAllNamed(AppRoute.signInScreen) ;
-               }
                update();
           } catch (e) {
                // Handle sign-out error

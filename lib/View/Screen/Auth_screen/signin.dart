@@ -90,7 +90,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               CustomTextField(
                                 textEditingController:controller.emailController ,
                                 validator: (value) {
-                                  if (value!.isEmpty) {
+                                  if (value == null || value.isEmpty) {
                                     return AppStrings.fieldCantBeEmpty;
                                   } else if (!AppStrings.emailRegexp
                                       .hasMatch(
@@ -117,7 +117,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               CustomTextField(
                                 textEditingController: controller.passwordController,
                                 validator: (value) {
-                                  if (value!.isEmpty){
+                                  if (value == null || value.isEmpty){
                                     return AppStrings.fieldCantBeEmpty;
                                   }  else {
                                     return null;
@@ -135,7 +135,6 @@ class _SignInScreenState extends State<SignInScreen> {
                                   const Spacer(),
                                   GestureDetector(
                                     onTap: () {
-                                 controller.signOut();
                                     },
                                     child: CustomText(
                                       textAlign: TextAlign.end,

@@ -1,3 +1,4 @@
+import 'package:firabse_realtime/Core/AppRoute/approute.dart';
 import 'package:firabse_realtime/Helper/shared_pefarance_helper.dart';
 import 'package:firabse_realtime/utils/AppColors/app_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,6 +7,8 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController extends GetxController{
+
+     Rx<User?> firebaseUser = Rx<User?>(null);
 
 
      final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -45,13 +48,16 @@ class AuthController extends GetxController{
                // Handle successful sign-in
                print('Signed in: ${userCredential.user}');
 
+               if(firebaseUser.value != null){
+                    Get.offAllNamed(AppRoute.homeScreen) ;
+               }
+               update();
+
           } catch (e) {
                Get.snackbar("","${e}",colorText: AppColors.blackColor);
                print('Sign-in failed:=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= $e');
           }
      }
-
-
 
   ///<======================== This is for the sign out =========================>
 
@@ -60,10 +66,26 @@ class AuthController extends GetxController{
                await _auth.signOut();
                // Handle successful sign-out
                print('Signed out');
+
+               if(firebaseUser.value == null){
+               Get.offAllNamed(AppRoute.signInScreen) ;
+               }
+               update();
           } catch (e) {
                // Handle sign-out error
                print('Sign-out failed: $e');
           }
      }
+
+
+
+     bool isLoggedIn() => firebaseUser.value != null;
+
+     @override
+  void onInit() {
+          firebaseUser.bindStream(_auth.authStateChanges());
+    super.onInit();
+  }
+
 
 }

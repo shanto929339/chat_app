@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       child: GetMaterialApp(
         defaultTransition: Transition.fadeIn,
         transitionDuration: const Duration(milliseconds: 200),
-        initialRoute: AppRoute.signInScreen,
+        initialRoute: AppRoute.splashScreen,
         navigatorKey: Get.key,
         getPages: AppRoute.routes,
         debugShowCheckedModeBanner: false,

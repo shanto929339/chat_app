@@ -1,12 +1,12 @@
 
+import 'package:firabse_realtime/Core/AppRoute/approute.dart';
 import 'package:firabse_realtime/View/Screen/Auth_screen/Controller/auth_controller.dart';
 import 'package:firabse_realtime/View/widgets/custom_button/custom_button.dart';
-import 'package:firabse_realtime/View/widgets/custom_image/custom_image.dart';
 import 'package:firabse_realtime/View/widgets/custom_text/custom_text.dart';
 import 'package:firabse_realtime/View/widgets/custom_text_field/custom_text_field.dart';
 import 'package:firabse_realtime/utils/AppColors/app_colors.dart';
-import 'package:firabse_realtime/utils/app_images/app_images.dart';
 import 'package:firabse_realtime/utils/app_strings/app_strings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,9 +21,26 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
 
+  final User? user = FirebaseAuth.instance.currentUser;
+
+
+
   // TextEditingController signInEmailController=TextEditingController();
   // TextEditingController signInPassController=TextEditingController();
   final formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(user!=null){
+
+        Get.offAllNamed(AppRoute.homeScreen);
+
+      }
+    });
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -197,7 +214,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     );
                  }
                )
-
     );
   }
 }

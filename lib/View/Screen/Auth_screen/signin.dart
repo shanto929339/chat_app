@@ -27,15 +27,14 @@ class _SignInScreenState extends State<SignInScreen> {
 
   // TextEditingController signInEmailController=TextEditingController();
   // TextEditingController signInPassController=TextEditingController();
+
   final formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_){
       if(user!=null){
-
         Get.offAllNamed(AppRoute.homeScreen);
-
       }
     });
 
@@ -199,7 +198,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                         ),
                                         recognizer: TapGestureRecognizer()
                                           ..onTap = () {
-                                           controller.signUp();
+                                          Get.toNamed(AppRoute.signUpScreen);
                                           },
                                       ),
                                     ],

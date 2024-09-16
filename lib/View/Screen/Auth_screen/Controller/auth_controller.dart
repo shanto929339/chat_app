@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firabse_realtime/Core/AppRoute/approute.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,9 @@ class AuthController extends GetxController{
 
 
      final FirebaseAuth _auth = FirebaseAuth.instance;
+     final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
+
+     final TextEditingController nameController = TextEditingController();
      final TextEditingController emailController = TextEditingController();
      final TextEditingController passwordController = TextEditingController();
 
@@ -17,10 +21,19 @@ class AuthController extends GetxController{
 
      Future<void> signUp() async {
           try {
-               final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+                final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
                     email: emailController.text,
                     password: passwordController.text,
-               );
+                 );
+                ///<===================== This is for save user info in database ===============>
+
+                await _firebaseFirestore.collection("users").doc(_auth.currentUser?.uid).set({
+                "name":nameController.text.trim(),
+                "email":emailController.text.trim(),
+                "status":"Unavailable",
+                });
+                Get.offAllNamed(AppRoute.signInScreen);
+                update();
                // Handle successful sign-up
                print('Signed up: ${userCredential.user}');
           } catch (e) {
@@ -28,7 +41,6 @@ class AuthController extends GetxController{
                print('Sign-up failed: $e');
           }
      }
-
 
    ///<================== This is for sign in ===============================>
 
@@ -47,7 +59,6 @@ class AuthController extends GetxController{
                // if(firebaseUser.value != null ){
                //  Get.offAllNamed(AppRoute.homeScreen) ;
                // }
-
 
           } catch (e) {
                //Get.snackbar("","${e}",colorText: AppColors.blackColor);

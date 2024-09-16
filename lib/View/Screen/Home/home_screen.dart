@@ -1,5 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firabse_realtime/Core/AppRoute/approute.dart';
+
 import 'package:firabse_realtime/View/Screen/Auth_screen/Controller/auth_controller.dart';
 import 'package:firabse_realtime/View/Screen/Home/Controller/hom_controller.dart';
 import 'package:firabse_realtime/View/widgets/custom_image/custom_image.dart';
@@ -79,12 +78,12 @@ class _HomeScreenState extends State<HomeScreen> {
                    padding: const EdgeInsets.all(8.0),
                    child: ListTile (
                    onTap: ()async{
-
                      User? user = FirebaseAuth.instance.currentUser;
                      String id=user!.uid.toString();
                      print("======================================== This is the user id${id}");
                    //Get.toNamed(AppRoute.chatScreen);
                      controller.createChatRoom(id,controller.userId[index].toString(),["${id.toString()}","${controller.userId[index].toString()}"] );
+                     controller.update();
                    },
                      ///<===================== Image section ==================>
                    leading: CustomImage(imageSrc:AppImages.bankImage,imageType: ImageType.png,size: 40.r,fit: BoxFit.cover,),

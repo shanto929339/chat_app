@@ -68,12 +68,12 @@ String chatRoomId="";
        'chatRoomID': chatRoomId,
        'createdAt': FieldValue.serverTimestamp(),
      }).then((value) {
-       Get.toNamed(AppRoute.chatScreen,arguments:chatRoomId);
-       update();
        print("Chat Room created with ID: $chatRoomId");
      }).catchError((error) {
        print("Error creating Chat Room: $error");
      });
+     Get.toNamed(AppRoute.chatScreen,arguments:chatRoomId);
+     update();
    }
 
 

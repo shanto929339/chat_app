@@ -194,7 +194,7 @@ class ProfileController extends GetxController{
   User? user = FirebaseAuth.instance.currentUser;
 
   if (user != null && profileImage != null) {
-  // 1. Upload profile picture to Firebase Storage
+
   String? photoURL = await uploadProfilePicture(profileImage!, user.uid);
 
   if (photoURL != null) {

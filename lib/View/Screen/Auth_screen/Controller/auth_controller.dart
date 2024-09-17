@@ -8,7 +8,6 @@ class AuthController extends GetxController{
 
      Rx<User?> firebaseUser = Rx<User?>(null);
 
-
      final FirebaseAuth _auth = FirebaseAuth.instance;
      final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
@@ -19,61 +18,28 @@ class AuthController extends GetxController{
 
      ///<==================== This is for sign up =======================>
 
-     // Future<void> signUp() async {
-     //      try {
-     //            final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-     //                email: emailController.text,
-     //                password: passwordController.text,
-     //             );
-     //            ///<===================== This is for save user info in database ===============>
-     //
-     //            await _firebaseFirestore.collection("users").doc(_auth.currentUser?.uid).set({
-     //            "name":nameController.text.trim(),
-     //            "email":emailController.text.trim(),
-     //            "status":"Unavailable",
-     //            });
-     //            Get.offAllNamed(AppRoute.signInScreen);
-     //            update();
-     //           // Handle successful sign-up
-     //           print('Signed up: ${userCredential.user}');
-     //      } catch (e) {
-     //           // Handle sign-up error
-     //           print('Sign-up failed: $e');
-     //      }
-     // }
-
      Future<void> signUp() async {
        try {
          final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
            email: emailController.text.trim(),
            password: passwordController.text.trim(),
          );
-
-         // Get the newly created user
          User? user = userCredential.user;
 
          if (user != null) {
-           // Set the display name for the user
            await user.updateDisplayName(nameController.text.trim());
-           await user.reload(); // Refresh the user's data
-           user = _auth.currentUser; // Fetch the updated user
-
-           // Save user info in the Firestore database
+           await user.reload();
+           user = _auth.currentUser;
            await _firebaseFirestore.collection("users").doc(user?.uid).set({
-             "name": nameController.text.trim(),
-             "email": emailController.text.trim(),
-             "status": "Unavailable",
+           "name": nameController.text.trim(),
+           "email": emailController.text.trim(),
+           "status": "Unavailable",
            });
-
-           // Navigate to the sign-in screen
            Get.offAllNamed(AppRoute.signInScreen);
            update();
-
-           // Handle successful sign-up
            print('Signed up: ${user?.displayName}');
          }
        } catch (e) {
-         // Handle sign-up error
          print('Sign-up failed: $e');
        }
      }
@@ -87,19 +53,11 @@ class AuthController extends GetxController{
                     email: emailController.text.trim(),
                     password: passwordController.text.trim(),
                );
-
-               Get.offAllNamed(AppRoute.homeScreen) ;
-               update();
-               // Handle successful sign-in
-               print('Signed in: ${userCredential.user}');
-
-               // if(firebaseUser.value != null ){
-               //  Get.offAllNamed(AppRoute.homeScreen) ;
-               // }
-
+                    Get.offAllNamed(AppRoute.homeScreen) ;
+                    update();
+                    print('Signed in: ${userCredential.user}');
           } catch (e) {
-               //Get.snackbar("","${e}",colorText: AppColors.blackColor);
-               print('Sign-in failed:=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= $e');
+               Get.snackbar("",'Sign-in failed:=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= $e');
           }
      }
 
@@ -108,16 +66,18 @@ class AuthController extends GetxController{
      Future<void> signOut() async {
           try {
                await _auth.signOut();
-               // Handle successful sign-out
-               print('Signed out');
+               Get.snackbar("","Signed out");
                Get.offAllNamed(AppRoute.signInScreen) ;
                update();
           } catch (e) {
-               // Handle sign-out error
                print('Sign-out failed: $e');
           }
      }
      bool isLoggedIn() => firebaseUser.value != null;
+
+
+
+
 
      @override
   void onInit() {

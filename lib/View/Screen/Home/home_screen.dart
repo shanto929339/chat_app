@@ -1,4 +1,3 @@
-
 import 'package:firabse_realtime/View/Screen/Auth_screen/Controller/auth_controller.dart';
 import 'package:firabse_realtime/View/Screen/Home/Controller/hom_controller.dart';
 import 'package:firabse_realtime/View/widgets/custom_image/custom_image.dart';
@@ -21,10 +20,27 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
+
+  @override
+  void initState() {
+   WidgetsBinding.instance.addPostFrameCallback((_){
+     HomController controller=HomController();
+    controller. getCurrentUserName();
+
+   });
+    super.initState();
+  }
+
+
   @override
   Widget build(BuildContext context){
+    String? userName = FirebaseAuth.instance.currentUser?.displayName;
+print("this is the name =---------------==-----------=--=-==================${userName}");
     return Scaffold(
-      appBar: AppBar(actions: [
+      appBar: AppBar(
+        title:CustomText(text:userName.toString(),color: AppColors.blackColor,),
+        centerTitle: true,
+        actions: [
            GetBuilder<AuthController>(
              builder: (controller) {
                return IconButton(onPressed:(){
@@ -54,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                        fillColor: AppColors.white,
                        fieldBorderColor: AppColors.labelColor,
                        hintText: AppStrings.searchHere,
-                       hintStyle: TextStyle(color: AppColors.authButtonColor, fontSize: 14.sp),
+                       hintStyle: TextStyle(color: AppColors.authButtonColor, fontSize: 14),
                        isPrefixIcon: true,
                        prefixIcon: Padding(
                          padding: EdgeInsets.only(left: 12.w),

@@ -121,7 +121,7 @@ String chatRoomId="";
 
     // Check if user is not null and displayName is set
     if (user != null) {
-      name = user.displayName!;
+      name = user.displayName??"";
       update();
       print("this is the name display =-=-=-=-=-=-=-=-=-=-=-=-=-=--=-${name}");
     } else {

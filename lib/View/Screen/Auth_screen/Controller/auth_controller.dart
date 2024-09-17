@@ -19,30 +19,67 @@ class AuthController extends GetxController{
 
      ///<==================== This is for sign up =======================>
 
-     Future<void> signUp() async {
-          try {
-                final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
-                    email: emailController.text,
-                    password: passwordController.text,
-                 );
-                ///<===================== This is for save user info in database ===============>
+     // Future<void> signUp() async {
+     //      try {
+     //            final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+     //                email: emailController.text,
+     //                password: passwordController.text,
+     //             );
+     //            ///<===================== This is for save user info in database ===============>
+     //
+     //            await _firebaseFirestore.collection("users").doc(_auth.currentUser?.uid).set({
+     //            "name":nameController.text.trim(),
+     //            "email":emailController.text.trim(),
+     //            "status":"Unavailable",
+     //            });
+     //            Get.offAllNamed(AppRoute.signInScreen);
+     //            update();
+     //           // Handle successful sign-up
+     //           print('Signed up: ${userCredential.user}');
+     //      } catch (e) {
+     //           // Handle sign-up error
+     //           print('Sign-up failed: $e');
+     //      }
+     // }
 
-                await _firebaseFirestore.collection("users").doc(_auth.currentUser?.uid).set({
-                "name":nameController.text.trim(),
-                "email":emailController.text.trim(),
-                "status":"Unavailable",
-                });
-                Get.offAllNamed(AppRoute.signInScreen);
-                update();
-               // Handle successful sign-up
-               print('Signed up: ${userCredential.user}');
-          } catch (e) {
-               // Handle sign-up error
-               print('Sign-up failed: $e');
-          }
+     Future<void> signUp() async {
+       try {
+         final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+           email: emailController.text.trim(),
+           password: passwordController.text.trim(),
+         );
+
+         // Get the newly created user
+         User? user = userCredential.user;
+
+         if (user != null) {
+           // Set the display name for the user
+           await user.updateDisplayName(nameController.text.trim());
+           await user.reload(); // Refresh the user's data
+           user = _auth.currentUser; // Fetch the updated user
+
+           // Save user info in the Firestore database
+           await _firebaseFirestore.collection("users").doc(user?.uid).set({
+             "name": nameController.text.trim(),
+             "email": emailController.text.trim(),
+             "status": "Unavailable",
+           });
+
+           // Navigate to the sign-in screen
+           Get.offAllNamed(AppRoute.signInScreen);
+           update();
+
+           // Handle successful sign-up
+           print('Signed up: ${user?.displayName}');
+         }
+       } catch (e) {
+         // Handle sign-up error
+         print('Sign-up failed: $e');
+       }
      }
 
-   ///<================== This is for sign in ===============================>
+
+     ///<================== This is for sign in ===============================>
 
      Future<void> signIn() async {
           try {
@@ -80,9 +117,6 @@ class AuthController extends GetxController{
                print('Sign-out failed: $e');
           }
      }
-
-
-
      bool isLoggedIn() => firebaseUser.value != null;
 
      @override

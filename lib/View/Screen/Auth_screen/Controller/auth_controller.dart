@@ -15,8 +15,35 @@ class AuthController extends GetxController{
      final TextEditingController emailController = TextEditingController();
      final TextEditingController passwordController = TextEditingController();
 
-
      ///<==================== This is for sign up =======================>
+
+     // Future<void> signUp() async {
+     //   try {
+     //     final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+     //       email: emailController.text.trim(),
+     //       password: passwordController.text.trim(),
+     //     );
+     //     User? user = userCredential.user;
+     //
+     //     if (user != null) {
+     //       await user.updateDisplayName(nameController.text.trim());
+     //       await user.reload();
+     //       user = _auth.currentUser;
+     //       await _firebaseFirestore.collection("users").doc(user?.uid).set({
+     //       "name": nameController.text.trim(),
+     //       "email": emailController.text.trim(),
+     //       "status": "Unavailable",
+     //       });
+     //       Get.offAllNamed(AppRoute.signInScreen);
+     //       update();
+     //       print('Signed up: ${user?.displayName}');
+     //     }
+     //   } catch (e) {
+     //     print('Sign-up failed: $e');
+     //   }
+     // }
+
+
 
      Future<void> signUp() async {
        try {
@@ -24,25 +51,49 @@ class AuthController extends GetxController{
            email: emailController.text.trim(),
            password: passwordController.text.trim(),
          );
+
          User? user = userCredential.user;
 
          if (user != null) {
+           // Update user's display name
            await user.updateDisplayName(nameController.text.trim());
            await user.reload();
            user = _auth.currentUser;
+
+           // Send email verification
+           if (!user!.emailVerified) {
+             await user?.sendEmailVerification();
+             print('Verification email sent to ${user?.email}');
+           }
+
+           // Store user info in Firestore
            await _firebaseFirestore.collection("users").doc(user?.uid).set({
-           "name": nameController.text.trim(),
-           "email": emailController.text.trim(),
-           "status": "Unavailable",
+             "name": nameController.text.trim(),
+             "email": emailController.text.trim(),
+             "status": "Unavailable",
            });
+
+           // Notify the user to verify their email before continuing
+           Get.snackbar(
+             'Verify Email',
+             'A verification email has been sent to ${user?.email}. Please verify before logging in.',
+             snackPosition: SnackPosition.BOTTOM,
+           );
+
+           // Sign out the user until they verify the email
+           await _auth.signOut();
+
+           // Optionally, navigate to the sign-in screen
            Get.offAllNamed(AppRoute.signInScreen);
-           update();
            print('Signed up: ${user?.displayName}');
          }
        } catch (e) {
          print('Sign-up failed: $e');
+         // Optionally, you can show a snackbar or dialog here to notify the user about the error
+         Get.snackbar('Sign-Up Error', e.toString(), snackPosition: SnackPosition.BOTTOM);
        }
      }
+
 
 
      ///<================== This is for sign in ===============================>
@@ -74,10 +125,6 @@ class AuthController extends GetxController{
           }
      }
      bool isLoggedIn() => firebaseUser.value != null;
-
-
-
-
 
      @override
   void onInit() {

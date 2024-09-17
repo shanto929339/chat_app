@@ -114,6 +114,7 @@ String chatRoomId="";
    }
 
   String name = '';
+///<============================= This is for get name =======================>
 
   getCurrentUserName() {
     // Get the current user

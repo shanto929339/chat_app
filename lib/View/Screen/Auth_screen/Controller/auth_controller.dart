@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firabse_realtime/Core/AppRoute/approute.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +18,6 @@ class AuthController extends GetxController{
      final TextEditingController passwordController = TextEditingController();
 
      ///<==================== This is for sign up =======================>
-
      // Future<void> signUp() async {
      //   try {
      //     final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
@@ -42,8 +43,6 @@ class AuthController extends GetxController{
      //     print('Sign-up failed: $e');
      //   }
      // }
-
-
 
      Future<void> signUp() async {
        try {
@@ -72,20 +71,14 @@ class AuthController extends GetxController{
              "email": emailController.text.trim(),
              "status": "Unavailable",
            });
-
-           // Notify the user to verify their email before continuing
            Get.snackbar(
              'Verify Email',
              'A verification email has been sent to ${user?.email}. Please verify before logging in.',
-             snackPosition: SnackPosition.BOTTOM,
+             snackPosition: SnackPosition.TOP,
            );
 
-           // Sign out the user until they verify the email
-           await _auth.signOut();
+           Get.offAllNamed(AppRoute.verifyScreen,arguments:user);
 
-           // Optionally, navigate to the sign-in screen
-           Get.offAllNamed(AppRoute.signInScreen);
-           print('Signed up: ${user?.displayName}');
          }
        } catch (e) {
          print('Sign-up failed: $e');
@@ -118,13 +111,34 @@ class AuthController extends GetxController{
           try {
                await _auth.signOut();
                Get.snackbar("","Signed out");
-               Get.offAllNamed(AppRoute.signInScreen) ;
+               Get.offAllNamed(AppRoute.signInScreen);
                update();
           } catch (e) {
                print('Sign-out failed: $e');
           }
      }
      bool isLoggedIn() => firebaseUser.value != null;
+
+
+     ///<===================== This is for check the verify status ======================>
+     Timer? timer;
+     bool isEmailVerified = false;
+
+     Future<void> checkEmailVerified() async {
+       User? user = FirebaseAuth.instance.currentUser;
+       await user?.reload(); // Reload the user state
+       user = FirebaseAuth.instance.currentUser;
+
+       if (user != null && user.emailVerified) {
+         timer?.cancel(); // Stop the timer once email is verified
+
+           isEmailVerified = true;
+           update();
+
+         // Navigate to the sign-in screen
+         Get.offAllNamed(AppRoute.signInScreen);
+       }
+     }
 
      @override
   void onInit() {

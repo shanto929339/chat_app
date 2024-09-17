@@ -1,3 +1,4 @@
+import 'package:firabse_realtime/Core/AppRoute/approute.dart';
 import 'package:firabse_realtime/View/Screen/Auth_screen/Controller/auth_controller.dart';
 import 'package:firabse_realtime/View/Screen/Home/Controller/hom_controller.dart';
 import 'package:firabse_realtime/View/widgets/custom_image/custom_image.dart';
@@ -38,7 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
 print("this is the name =---------------==-----------=--=-==================${userName}");
     return Scaffold(
       appBar: AppBar(
-        title:CustomText(text:userName.toString(),color: AppColors.blackColor,),
+        title:GestureDetector(
+            onTap: (){
+            Get.toNamed(AppRoute.profileScreen);
+            },
+            child: CustomText(text:userName.toString(),color: AppColors.blackColor,)),
         centerTitle: true,
         actions: [
            GetBuilder<AuthController>(

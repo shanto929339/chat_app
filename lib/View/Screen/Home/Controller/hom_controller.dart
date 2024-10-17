@@ -10,7 +10,9 @@ class HomController extends GetxController{
 ///<=================== This is for get user list ===========================>
      bool isLoading=false;
      List<String> userId=[];
-     List<Map<String, dynamic>> userList = []; // List to store user data
+     List<Map<String, dynamic>> userList = [];
+
+     // List to store user data
 
   // Future<void> getUserList() async {
   //   User? user = FirebaseAuth.instance.currentUser;
